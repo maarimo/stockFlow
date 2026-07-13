@@ -11,11 +11,16 @@ server:
 
 springdoc:
   api-docs:
-    path: /docs
+    path: /v3/api-docs
 
   swagger-ui:
-    path: /swagger
+    path: /swagger-ui.html
 
 logging:
   level:
     root: INFO
+
+jwt:
+  secret: 1234567890123456789012345678901234567890123456789012345678901234
+  expiration: 86400000
+

@@ -1,5 +1,6 @@
 package com.maarimo.stockFlow.entity;
 
+import com.maarimo.stockFlow.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,4 +26,7 @@ public class Usuario {
     @Column(nullable = false)
     private String senha;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 }

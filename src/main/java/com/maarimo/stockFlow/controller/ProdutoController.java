@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,17 +20,8 @@ public class ProdutoController {
 
     private final ProdutoService produtoService;
 
-    @Operation(summary = "Cadastrar um novo produto")
-    @PostMapping
-    public ResponseEntity<ProdutoResponseDTO> criar(
-            @Valid @RequestBody ProdutoRequestDTO dto) {
-
-        ProdutoResponseDTO produto = produtoService.criar(dto);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(produto);
-    }
-
     @Operation(summary = "Listar todos os produtos")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FUNCIONARIO')")
     @GetMapping
     public ResponseEntity<List<ProdutoResponseDTO>> listar() {
 
@@ -37,23 +29,36 @@ public class ProdutoController {
     }
 
     @Operation(summary = "Buscar produto por ID")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FUNCIONARIO')")
     @GetMapping("/{id}")
-    public ResponseEntity<ProdutoResponseDTO> buscarPorId(
-            @PathVariable Long id) {
+    public ResponseEntity<ProdutoResponseDTO> buscarPorId(@PathVariable Long id) {
 
         return ResponseEntity.ok(produtoService.buscarPorId(id));
     }
 
-    @Operation(summary = "Atualizar um produto")
+    @Operation(summary = "Cadastrar produto")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping
+    public ResponseEntity<ProdutoResponseDTO> cadastrar(
+            @RequestBody @Valid ProdutoRequestDTO dto) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(produtoService.criar(dto));
+    }
+
+    @Operation(summary = "Atualizar produto")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ProdutoResponseDTO> atualizar(
             @PathVariable Long id,
-            @Valid @RequestBody ProdutoRequestDTO dto) {
+            @RequestBody @Valid ProdutoRequestDTO dto) {
 
         return ResponseEntity.ok(produtoService.atualizar(id, dto));
     }
 
-    @Operation(summary = "Excluir um produto")
+    @Operation(summary = "Excluir produto")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
 
